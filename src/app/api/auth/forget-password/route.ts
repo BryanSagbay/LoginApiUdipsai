@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         }
         const token = jwt.sign({data: tokenData},process.env.JWT_SECRET,{expiresIn: 86400});
         
-        const forgetUrl = `http://localhost:3000/change-password?token=${token}`;
+        const forgetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/change-password?token=${token}`;
 
         await resend.emails.send({
             from: "onboarding@resend.dev",
