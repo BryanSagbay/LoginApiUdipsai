@@ -58,10 +58,13 @@ __turbopack_esm__({
 });
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__ = __turbopack_import__("[externals]/mongoose [external] (mongoose, cjs)");
 ;
-const MONGO_URL = "mongodb://127.0.0.1/udipsai";
 const connectMongoDB = async ()=>{
     try {
-        await __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__["default"].connect(MONGO_URL);
+        // Verificamos que MONGODB_URI esté definido
+        if (!process.env.MONGODB_URL) {
+            throw new Error("MONGODB_URI no está definido en las variables de entorno");
+        }
+        await __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__["default"].connect(process.env.MONGODB_URL);
         console.log('Conectado a la base de datos');
     } catch (error) {
         console.error('Error al conectar a la base de datos:', error);
@@ -111,11 +114,17 @@ const messages = {
         emailExist: 'El usuario ya existe',
         default: 'Algo salió mal',
         UserNotFound: 'Usuario no encontrado',
-        incorredPassword: 'Contraseña incorrecta'
+        incorredPassword: 'Contraseña incorrecta',
+        notAutorized: 'No autorizado',
+        PasswordNotMatch: 'Las contraseñas no coinciden',
+        tokenNotValid: 'Token no valido'
     },
     success: {
         userCreated: 'Usuario creado exitosamente',
-        userLogged: 'Usuario logeado exitosamente'
+        userLogged: 'Usuario logeado exitosamente',
+        emailSend: 'Correo enviado exitosamente',
+        passwordChanged: 'Contraseña cambiada exitosamente',
+        authorized: 'Autorizado'
     }
 };
 }}),
@@ -214,9 +223,16 @@ async function POST(request) {
         }
         // @ts-ignore
         const { password: userPass, ...rest } = UserFind._doc;
+        if (!process.env.JWT_SECRET) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                message: "JWT_SECRET no está definido en las variables de entorno"
+            }, {
+                status: 500
+            });
+        }
         const token = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$jsonwebtoken$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].sign({
             data: rest
-        }, 'secreto', {
+        }, process.env.JWT_SECRET, {
             expiresIn: 86400
         });
         const response = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({

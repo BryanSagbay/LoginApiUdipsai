@@ -67,10 +67,19 @@ const messages = {
         emailNotValid: 'Email no valido:',
         isValidPassword: 'Porfavor revisa que las contraseñas coincidan',
         emailExist: 'El usuario ya existe',
-        default: 'Algo salió mal'
+        default: 'Algo salió mal',
+        UserNotFound: 'Usuario no encontrado',
+        incorredPassword: 'Contraseña incorrecta',
+        notAutorized: 'No autorizado',
+        PasswordNotMatch: 'Las contraseñas no coinciden',
+        tokenNotValid: 'Token no valido'
     },
     success: {
-        userCreated: 'Usuario creado exitosamente'
+        userCreated: 'Usuario creado exitosamente',
+        userLogged: 'Usuario logeado exitosamente',
+        emailSend: 'Correo enviado exitosamente',
+        passwordChanged: 'Contraseña cambiada exitosamente',
+        authorized: 'Autorizado'
     }
 };
 }}),
@@ -238,9 +247,17 @@ async function POST(request) {
         //@ts-ignore
         const { password: userPass, ...rest } = newUser;
         await newUser.save();
+        // Verificamos que JWT_SECRET esté definido
+        if (!process.env.JWT_SECRET) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                message: "JWT_SECRET no está definido en las variables de entorno"
+            }, {
+                status: 500
+            });
+        }
         const token = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$jsonwebtoken$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].sign({
             data: rest
-        }, 'secreto', {
+        }, process.env.JWT_SECRET, {
             expiresIn: '24h'
         });
         const response = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({

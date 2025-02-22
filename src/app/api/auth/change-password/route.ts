@@ -50,8 +50,15 @@ export async function POST(request: NextRequest) {
 
         //process.env.JWT_SECRET
         try{
+            // Verificamos que JWT_SECRET esté definido
+            if (!process.env.JWT_SECRET) {
+                return NextResponse.json(
+                    { message: "JWT_SECRET no está definido en las variables de entorno" },
+                    { status: 500 }
+                );
+            }
             
-            const isTokenValid = jwt.verify(token, 'secreto'); 
+            const isTokenValid = jwt.verify(token,process.env.JWT_SECRET); 
             
             //@ts-ignore
             const { data } = isTokenValid;

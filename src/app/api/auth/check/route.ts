@@ -24,8 +24,17 @@ export async function GET() {
             );
         }
 
+
+        // Verificamos que JWT_SECRET esté definido
+        if (!process.env.JWT_SECRET) {
+            return NextResponse.json(
+                { message: "JWT_SECRET no está definido en las variables de entorno" },
+                { status: 500 }
+            );
+        }
+
         try{
-            const isTokenValid = jwt.verify(token,"secreto");
+            const isTokenValid = jwt.verify(token,process.env.JWT_SECRET);
 
             // @ts-ignore
             const {data} = isTokenValid;

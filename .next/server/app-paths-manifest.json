@@ -1,5 +1,4 @@
 {
-  "/api/auth/register/route": "app/api/auth/register/route.js",
   "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/auth/forget-password/route": "app/api/auth/forget-password/route.js"
+  "/api/auth/register/route": "app/api/auth/register/route.js"
 }
